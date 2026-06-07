@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>灵魂导师黄sir的快乐一天</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body {
+            background: linear-gradient(145deg, #FFF0F5, #FFE0E7);
+            font-family: system-ui, 'PingFang SC', cursive;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .float-area {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .float-item {
+            position: absolute;
+            font-size: 22px;
+            opacity: 0.4;
+            animation: fall 5s linear forwards;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh); }
+            100% { transform: translateY(110vh); opacity: 0; }
+        }
+        .card {
+            background: rgba(255,250,240,0.92);
+            backdrop-filter: blur(20px);
+            border-radius: 56px;
+            padding: 20px 16px 24px;
+            max-width: 540px;
+            width: 100%;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,215,215,0.8);
+            position: relative;
+            z-index: 10;
+        }
+        .title { text-align: center; margin-bottom: 8px; }
+        .title .line1 { font-size: 28px; font-weight: 800; color: #E88D8D; display: inline-block; }
+        .title .line2 { font-size: 36px; font-weight: 800; color: #FF9AAE; margin: 0 4px; display: inline-block; }
+        .title .line3 { font-size: 26px; font-weight: 800; color: #C46A6A; margin-top: 2px; }
+        .title .sign { font-size: 16px; color: #B5A8C9; margin-top: 4px; }
+        .sub { text-align: center; font-size: 11px; color: #D47B7B; margin-bottom: 14px; }
+        .music-bar {
+            background: rgba(255,240,235,0.95);
+            border-radius: 60px;
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .call-btn { width: 46px; height: 46px; background: #FFB6C1; border: none; border-radius: 50%; font-size: 24px; cursor: pointer; }
+        .call-btn:active { transform: scale(0.92); }
+        .song-tip { flex: 1; font-size: 12px; color: #E88D8D; font-weight: 500; text-align: center; background: #FFF0E0; padding: 5px; border-radius: 40px; }
+        .score-board {
+            display: flex; justify-content: space-between;
+            background: #FFF0EA; padding: 8px 20px; border-radius: 50px;
+            margin-bottom: 16px; font-weight: bold; color: #D47B7B; font-size: 14px;
+        }
+        .ctrl-btns { display: flex; gap: 10px; margin-bottom: 16px; }
+        .ctrl-btn {
+            flex: 1; padding: 8px 0; border-radius: 50px; border: none;
+            background: #FFE0D4; color: #B45B5B; font-weight: bold; font-size: 12px;
+            cursor: pointer;
+        }
+        .game-btns { display: flex; gap: 10px; margin-bottom: 16px; }
+        .game-btn {
+            flex: 1; padding: 10px 0; border-radius: 60px; border: none;
+            font-weight: bold; background: #FFE0D4; color: #B45B5B; font-size: 13px;
+            cursor: pointer;
+        }
+        .game-btn.active { background: #FFB6C1; color: white; box-shadow: 0 0 0 2px white, 0 0 0 3px #FF9AAE; }
+        .game-area {
+            background: #FFF5EF; height: 260px; border-radius: 40px;
+            position: relative; overflow: hidden; touch-action: none; cursor: crosshair;
+            box-shadow: inset 0 0 0 2px #FFE0D0;
+        }
+        .fruit, .bomb, .banana, .bubble {
+            position: absolute;
+            pointer-events: auto;
+        }
+        .lyric {
+            position: fixed;
+            pointer-events: auto;
+            font-size: 18px; font-weight: bold; white-space: nowrap;
+            background: #FFFFFFDD; padding: 6px 16px; border-radius: 60px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer; z-index: 200;
+            backdrop-filter: blur(4px);
+            border: 1px solid #FFB6C1;
+        }
+        @keyframes popIn { 0%{transform:scale(0) rotate(0deg);opacity:0;} 60%{transform:scale(1.2) rotate(10deg);} 100%{transform:scale(1) rotate(0deg);opacity:1;} }
+        @keyframes slideLeft { 0%{transform:translateX(100vw) skewX(20deg);opacity:0;} 100%{transform:translateX(0) skewX(0);opacity:1;} }
+        @keyframes slideRight { 0%{transform:translateX(-100vw) skewX(-20deg);opacity:0;} 100%{transform:translateX(0) skewX(0);opacity:1;} }
+        @keyframes floatUp { 0%{transform:translateY(100vh) rotate(-15deg);opacity:0;} 100%{transform:translateY(0) rotate(0);opacity:1;} }
+        @keyframes spinShow { 0%{transform:rotate(360deg) scale(0.3);opacity:0;} 100%{transform:rotate(0) scale(1);opacity:1;} }
+        .ani-pop { animation: popIn 0.6s ease-out forwards; }
+        .ani-l { animation: slideLeft 0.7s ease-out forwards; }
+        .ani-r { animation: slideRight 0.7s ease-out forwards; }
+        .ani-up { animation: floatUp 0.8s ease-out forwards; }
+        .ani-spin { animation: spinShow 0.9s ease-out forwards; }
+
+        .fruit { font-size: 44px; }
+        .bomb { font-size: 48px; }
+        .banana { font-size: 42px; cursor: pointer; }
+        .bubble { font-size: 44px; cursor: pointer; }
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            animation: particleFly 0.4s forwards;
+            z-index: 1000;
+        }
+        @keyframes particleFly {
+            0% { opacity: 1; transform: scale(0.5); }
+            100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.2); }
+        }
+        .basket { position: absolute; bottom: 10px; font-size: 48px; pointer-events: none; }
+        .game-hint {
+            text-align: center; margin-top: 100px; color: #DDAA99;
+            font-size: 14px; font-weight: bold; background: #FFF0E0AA;
+            width: fit-content; margin: 0 auto; padding: 4px 20px; border-radius: 99px;
+        }
+        .footer { text-align: center; font-size: 10px; color: #D7A3A3; margin-top: 16px; }
+        .score-fly {
+            position: fixed; font-size: 18px; font-weight: bold; color: #FF6B6B;
+            animation: upFly 0.4s forwards; z-index: 100;
+            pointer-events: none;
+        }
+        @keyframes upFly { 0%{ opacity:1; transform:translateY(0) scale(0.6); } 100%{ opacity:0; transform:translateY(-40px) scale(1.1); } }
+        .pause-mask {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: #000000AA; backdrop-filter: blur(4px);
+            z-index: 1000; display: flex; justify-content: center; align-items: center;
+            color: white; font-size: 26px; cursor: pointer;
+        }
+        .pause-mask span { background: #FFB6C1CC; padding: 12px 28px; border-radius: 60px; }
+    </style>
+</head>
+<body>
+<div class="float-area" id="floatArea"></div>
+<div class="card">
+    <div class="title">
+        <div><span class="line1">灵魂导师</span><span class="line2">黄sir的</span></div>
+        <div class="line3">快乐一天</div>
+        <div class="sign">黄朔</div>
+    </div>
+    <div class="sub">🎵 点📞听歌</div>
+    <div class="music-bar">
+        <button class="call-btn" id="callBtn">📞</button>
+        <div class="song-tip">✨ 灵魂导师黄sir的快乐一天 ✨</div>
+    </div>
+    <div class="score-board">
+        <span>🎪 分数 <span id="score">0</span></span>
+        <span>❤️ 生命 <span id="life">5</span></span>
+    </div>
+    <div class="ctrl-btns">
+        <button id="pauseBtn" class="ctrl-btn">⏸️ 暂停</button>
+        <button id="resetScoreBtn" class="ctrl-btn">🔄 重置</button>
+    </div>
+    <div class="game-btns">
+        <button class="game-btn active" id="btnFruit">🔪 切水果</button>
+        <button class="game-btn" id="btnWord">🎈 歌词炸屏</button>
+        <button class="game-btn" id="btnPop">🫧 戳泡泡</button>
+        <button class="game-btn" id="btnBanana">🍌 接香蕉</button>
+    </div>
+    <div class="game-area" id="gameArea"></div>
+    <div class="footer">滑动切水果（避开💣）· 点击歌词 · 戳泡泡 · 滑动篮子接香蕉</div>
+</div>
+
+<script>
+(function(){
+    const floatArea = document.getElementById('floatArea');
+    const area = document.getElementById('gameArea');
+    const scoreSpan = document.getElementById('score');
+    const lifeSpan = document.getElementById('life');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetScoreBtn = document.getElementById('resetScoreBtn');
+    const callBtn = document.getElementById('callBtn');
+    const btnFruit = document.getElementById('btnFruit');
+    const btnWord = document.getElementById('btnWord');
+    const btnPop = document.getElementById('btnPop');
+    const btnBanana = document.getElementById('btnBanana');
+
+    let audioCtx = null;
+    let total = 0, combo = 0, comboTimer = null, life = 5;
+    let current = 'fruit';
+    let animId = null, spawnId = null;
+    let paused = false;
+    let pauseMask = null;
+
+    // 切水果事件句柄（全局保存，用于解绑）
+    let fruitDown, fruitMove, fruitUp;
+
+    // 漂浮装饰
+    function addFloat() {
+        const d = document.createElement('div');
+        d.className = 'float-item';
+        d.innerText = ['🌸','🎤','🎸','🍌','✨','🍉'][Math.floor(Math.random()*6)];
+        d.style.left = Math.random()*100+'%';
+        d.style.animationDuration = 4+Math.random()*5+'s';
+        floatArea.appendChild(d);
+        setTimeout(() => { if(d.parentNode) d.remove(); }, 5000);
+    }
+    setInterval(addFloat, 700);
+
+    // 音效
+    function playTone(freq, dur) {
+        if (!audioCtx) try { audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){return;}
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        gain.gain.value = 0.08;
+        osc.frequency.value = freq;
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime+dur);
+        osc.stop(audioCtx.currentTime+dur);
+        osc.start();
+    }
+    function playSlice(){playTone(880,0.08);}
+    function playBomb(){playTone(150,0.2);}
+    function playPop(){playTone(1250,0.06);}
+    function playScore(){playTone(1050,0.1);}
+    function playCatch(){playTone(650,0.12);}
+    function playLyric(){playTone(1180,0.09);}
+
+    // 粒子效果（双重清理）
+    function addParticles(x, y, emoji, color = null) {
+        for(let i=0;i<8;i++){
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.innerText = emoji;
+            if(color) p.style.color = color;
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 20 + Math.random() * 40;
+            p.style.setProperty('--dx', Math.cos(angle)*dist + 'px');
+            p.style.setProperty('--dy', Math.sin(angle)*dist + 'px');
+            p.style.left = (x-10) + 'px';
+            p.style.top = (y-10) + 'px';
+            p.style.fontSize = (14+Math.random()*10)+'px';
+            document.body.appendChild(p);
+            setTimeout(() => { if(p.parentNode) p.remove(); }, 450);
+        }
+    }
+
+    // 分数飘字
+    function addScore(p, x, y, isBonus=false) {
+        if(isBonus){
+            total += p;
+            scoreSpan.innerText = total;
+            const fly = document.createElement('div');
+            fly.className = 'score-fly';
+            fly.innerText = `连击+${p}`;
+            fly.style.left = (x||innerWidth/2)+'px';
+            fly.style.top = (y||innerHeight/2-20)+'px';
+            document.body.appendChild(fly);
+            setTimeout(() => { if(fly.parentNode) fly.remove(); }, 500);
+            playScore();
+            return;
+        }
+        combo++;
+        total += p;
+        scoreSpan.innerText = total;
+        if(comboTimer) clearTimeout(comboTimer);
+        comboTimer = setTimeout(()=>{ combo=0; }, 1300);
+        const fly = document.createElement('div');
+        fly.className = 'score-fly';
+        fly.innerText = `+${p}`;
+        fly.style.left = (x||innerWidth/2)+'px';
+        fly.style.top = (y||innerHeight/2)+'px';
+        document.body.appendChild(fly);
+        setTimeout(() => { if(fly.parentNode) fly.remove(); }, 450);
+        playScore();
+        if(combo===5) addScore(15,x,y,true);
+        if(combo===10) addScore(30,x,y,true);
+    }
+
+    // 扣生命
+    function loseLife(x, y) {
+        life--;
+        lifeSpan.innerText = life;
+        combo = 0;
+        const fly = document.createElement('div');
+        fly.className = 'score-fly';
+        fly.innerText = `-1❤️`;
+        fly.style.color = '#ff4444';
+        fly.style.left = (x||innerWidth/2)+'px';
+        fly.style.top = (y||innerHeight/2)+'px';
+        document.body.appendChild(fly);
+        setTimeout(() => { if(fly.parentNode) fly.remove(); }, 450);
+        playBomb();
+        addParticles(x, y, '💥');
+        if(life <= 0) resetAll();
+    }
+
+    // 全局重置
+    function resetAll() {
+        total = 0; combo = 0; life = 5;
+        scoreSpan.innerText = '0';
+        lifeSpan.innerText = '5';
+        if(comboTimer) clearTimeout(comboTimer);
+        switchGame(current);
+    }
+
+    // 全局停止 + 彻底清理（核心防卡顿）
+    function stopAllTask() {
+        if(spawnId) clearInterval(spawnId);
+        if(animId) cancelAnimationFrame(animId);
+        spawnId = null; animId = null;
+
+        // 解绑切水果事件，防止重复绑定堆积
+        if(fruitDown){
+            area.removeEventListener('mousedown', fruitDown);
+            area.removeEventListener('mousemove', fruitMove);
+            area.removeEventListener('mouseup', fruitUp);
+            area.removeEventListener('mouseleave', fruitUp);
+            area.removeEventListener('touchstart', fruitDown);
+            area.removeEventListener('touchmove', fruitMove);
+            area.removeEventListener('touchend', fruitUp);
+        }
+
+        // 清空游戏区域DOM
+        area.innerHTML = '';
+        // 全局清理所有漂浮元素
+        document.querySelectorAll('.particle,.score-fly,.lyric').forEach(el => {
+            if(el.parentNode) el.remove();
+        });
+    }
+
+    // 切换游戏
+    function switchGame(mode) {
+        stopAllTask();
+        current = mode;
+        if(mode === 'fruit') startFruit();
+        else if(mode === 'word') startWord();
+        else if(mode === 'pop') startPop();
+        else if(mode === 'banana') startBanana();
+    }
+
+    // ========== 1. 切水果（优化数组回收+事件管理） ==========
+    function startFruit() {
+        const hint = document.createElement('div');
+        hint.className='game-hint';
+        hint.innerText='🔪 滑动切水果！💣炸弹扣生命';
+        area.appendChild(hint);
+
+        let fruits = [];
+        let fruitId = 0;
+        let lastPos = null, isSlashing = false;
+        const fruitIcons = ['🍎','🍊','🍉','🍒','🥝','🍑','🍓'];
+        const bombRate = 0.12;
+        const MAX_FRUITS = 10;
+
+        function spawnFruit() {
+            if(paused || fruits.length >= MAX_FRUITS) return;
+            const isBomb = Math.random() < bombRate;
+            const el = document.createElement('div');
+            el.className = isBomb ? 'bomb' : 'fruit';
+            el.innerText = isBomb ? '💣' : fruitIcons[Math.floor(Math.random()*fruitIcons.length)];
+            const x = 20 + Math.random() * (area.clientWidth - 80);
+            const y = area.clientHeight * 0.15;
+            el.style.left = x + 'px';
+            el.style.top = y + 'px';
+            area.appendChild(el);
+
+            fruits.push({id: fruitId++, el, x, y, vx: (Math.random()-0.5)*1.2, vy: -0.6-Math.random()*0.8, isBomb, cut: false});
+        }
+
+        function updateFruitPos() {
+            if(paused) { animId = requestAnimationFrame(updateFruitPos); return; }
+            for(let i = fruits.length - 1; i >= 0; i--) {
+                const f = fruits[i];
+                if(f.cut) continue;
+                f.vy += 0.12;
+                f.x += f.vx;
+                f.y += f.vy;
+                f.el.style.left = f.x + 'px';
+                f.el.style.top = f.y + 'px';
+                // 移出屏幕立刻删除DOM+数组项，杜绝内存堆积
+                if(f.x < -100 || f.x > area.clientWidth + 100 || f.y > area.clientHeight + 50) {
+                    if(f.el.parentNode) f.el.remove();
+                    fruits.splice(i, 1);
+                }
+            }
+            animId = requestAnimationFrame(updateFruitPos);
+        }
+
+        function checkHit(p1, p2) {
+            const hitList = [];
+            for(const f of fruits) {
+                if(f.cut) continue;
+                const cx = f.x + 24, cy = f.y + 24;
+                const dx = p2.x - p1.x, dy = p2.y - p1.y;
+                const lenSq = dx*dx + dy*dy;
+                if(lenSq < 1) continue;
+                const t = Math.max(0, Math.min(1, ((cx-p1.x)*dx + (cy-p1.y)*dy) / lenSq));
+                const nearX = p1.x + t*dx;
+                const nearY = p1.y + t*dy;
+                if(Math.hypot(cx-nearX, cy-nearY) < 30) hitList.push(f);
+            }
+            return hitList;
+        }
+
+        fruitDown = function(e) {
+            if(paused) return;
+            e.preventDefault();
+            const rect = area.getBoundingClientRect();
+            const cx = e.touches ? e.touches[0].clientX : e.clientX;
+            const cy = e.touches ? e.touches[0].clientY : e.clientY;
+            lastPos = {x: cx - rect.left, y: cy - rect.top};
+            isSlashing = true;
+        };
+        fruitMove = function(e) {
+            if(!isSlashing || paused) return;
+            e.preventDefault();
+            const rect = area.getBoundingClientRect();
+            const cx = e.touches ? e.touches[0].clientX : e.clientX;
+            const cy = e.touches ? e.touches[0].clientY : e.clientY;
+            const now = {x: cx - rect.left, y: cy - rect.top};
+            if(lastPos) {
+                const hits = checkHit(lastPos, now);
+                hits.forEach(f => {
+                    if(f.cut) return;
+                    f.cut = true;
+                    if(f.el.parentNode) f.el.remove();
+                    const idx = fruits.indexOf(f);
+                    if(idx > -1) fruits.splice(idx,1);
+                    if(f.isBomb) loseLife(cx, cy);
+                    else {
+                        addScore(10, cx, cy);
+                        addParticles(cx, cy, '🍉');
+                        playSlice();
+                    }
+                });
+            }
+            lastPos = now;
+        };
+        fruitUp = function() {
+            isSlashing = false;
+            lastPos = null;
+        };
+
+        // 统一绑定事件
+        area.addEventListener('mousedown', fruitDown);
+        area.addEventListener('mousemove', fruitMove);
+        area.addEventListener('mouseup', fruitUp);
+        area.addEventListener('mouseleave', fruitUp);
+        area.addEventListener('touchstart', fruitDown, {passive:false});
+        area.addEventListener('touchmove', fruitMove, {passive:false});
+        area.addEventListener('touchend', fruitUp);
+
+        spawnId = setInterval(spawnFruit, 800);
+        animId = requestAnimationFrame(updateFruitPos);
+    }
+
+    // ========== 2. 歌词炸屏（全屏+随机动画） ==========
+    function startWord() {
+        const hint = document.createElement('div');
+        hint.className='game-hint';
+        hint.innerText='🎈 点击歌词，彩色粒子炸裂';
+        area.appendChild(hint);
+
+        const lyricsAll = [
+            '☀️ 早餐起床太阳晒屁股','🌈 刷牙刷出彩虹弧度(yeyiyeyi)','🧦 袜子穿反算行为艺术','🚶 踩节拍就出门闯江湖',
+            '😆 喜哈哈笑哈哈','〰️ 眉毛跳成波浪花','🎭 左摇摇右摆摆','💥 踩碎所有小烦恼','🤸 摔跤也要姿势佳',
+            '👏 转个圈拍拍灰','💡 我是快乐发明家','🚌 公交车变身摇摆鼓','☁️ 云朵追着风跳探戈','🐕 路边小狗和我对歌',
+            '🎵 汪汪叮咚变成主打歌','🍌 滑倒的香蕉皮','💃 是街舞新导师','🎨 打翻的颜料罐','🌺 给马路穿花衣',
+            '😂 哈哈哈哈哈','🍬 呼吸都是甜滋味','🫧 全宇宙装进泡泡机','🌍 全世界只有我自己','⏰ 全宇宙装进时光机'
+        ];
+        const lyricColors = ['#FFBABA','#C5E9C5','#FFE0A3','#D0B8E8','#FFC6C6','#87CEEB','#FFA07A'];
+        const aniList = ['ani-pop','ani-l','ani-r','ani-up','ani-spin'];
+
+        function spawnLyric() {
+            if(paused) return;
+            const el = document.createElement('div');
+            el.className = 'lyric ' + aniList[Math.floor(Math.random()*aniList.length)];
+            el.innerText = lyricsAll[Math.floor(Math.random()*lyricsAll.length)];
+            el.style.backgroundColor = lyricColors[Math.floor(Math.random()*lyricColors.length)];
+            const x = 20 + Math.random() * (document.documentElement.clientWidth - 200);
+            const y = 20 + Math.random() * (document.documentElement.clientHeight - 60);
+            el.style.left = x+'px';
+            el.style.top = y+'px';
+
+            el.onclick = (e) => {
+                if(el.parentNode) el.remove();
+                const colorArr = ['#ff6b6b','#4ecdc4','#ffe066','#a8e6cf','#dda0dd'];
+                addParticles(e.clientX, e.clientY, '✨', colorArr[Math.floor(Math.random()*colorArr.length)]);
+                addScore(10, e.clientX, e.clientY);
+                playLyric();
+            };
+            document.body.appendChild(el);
+            setTimeout(() => { if(el.parentNode) el.remove(); }, 7000);
+        }
+        spawnId = setInterval(spawnLyric, 650);
+    }
+
+    // ========== 3. 戳泡泡 ==========
+    function startPop() {
+        const hint = document.createElement('div');
+        hint.className='game-hint';
+        hint.innerText='🫧 戳破泡泡，即刻消失';
+        area.appendChild(hint);
+        const colors = ['#FFB3BA','#C5E99B','#B5EAD7','#FFDAC1','#E0BBE4'];
+        spawnId = setInterval(()=>{
+            if(paused) return;
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.innerText = '🫧';
+            bubble.style.color = colors[Math.floor(Math.random()*colors.length)];
+            bubble.style.left = (5 + Math.random() * 85) + '%';
+            bubble.style.top = (10 + Math.random() * 70) + '%';
+            bubble.onclick = (e) => {
+                if(bubble.parentNode) bubble.remove();
+                addParticles(e.clientX, e.clientY, '💧');
+                addScore(10, e.clientX, e.clientY);
+                playPop();
+            };
+            area.appendChild(bubble);
+            setTimeout(() => { if(bubble.parentNode) bubble.remove(); }, 2200);
+        }, 550);
+    }
+
+    // ========== 4. 接香蕉 ==========
+    function startBanana() {
+        const hint = document.createElement('div');
+        hint.className='game-hint';
+        hint.innerText='🍌 滑动篮子接香蕉，接住立即消失';
+        area.appendChild(hint);
+
+        const basket = document.createElement('div');
+        basket.className = 'basket';
+        basket.innerText = '🧺';
+        basket.style.left = '45%';
+        area.appendChild(basket);
+
+        function moveBasket(e) {
+            if(paused) return;
+            const rect = area.getBoundingClientRect();
+            const cx = e.touches ? e.touches[0].clientX : e.clientX;
+            let per = ((cx - rect.left) / rect.width) * 100;
+            per = Math.max(15, Math.min(85, per));
+            basket.style.left = per + '%';
+        }
+        area.onmousemove = moveBasket;
+        area.ontouchmove = (e)=>{e.preventDefault(); moveBasket(e);};
+
+        spawnId = setInterval(()=>{
+            if(paused) return;
+            const banana = document.createElement('div');
+            banana.className = 'banana';
+            banana.innerText = '🍌';
+            banana.style.left = (10 + Math.random() * 80) + '%';
+            banana.style.top = '-50px';
+            area.appendChild(banana);
+
+            function fall() {
+                if(paused || !banana.parentNode) return;
+                let top = parseFloat(banana.style.top) + 6;
+                banana.style.top = top + 'px';
+                const bkRect = basket.getBoundingClientRect();
+                const bnRect = banana.getBoundingClientRect();
+                if(bnRect.bottom >= bkRect.top && bnRect.left < bkRect.right && bnRect.right > bkRect.left) {
+                    if(banana.parentNode) banana.remove();
+                    addScore(15, bnRect.left, bnRect.top);
+                    addParticles(bnRect.left, bnRect.top, '🍌');
+                    playCatch();
+                    return;
+                }
+                if(top > area.clientHeight){
+                    if(banana.parentNode) banana.remove();
+                    return;
+                }
+                requestAnimationFrame(fall);
+            }
+            requestAnimationFrame(fall);
+        }, 900);
+    }
+
+    // 暂停/继续
+    function showPauseLayer() {
+        if(pauseMask) return;
+        pauseMask = document.createElement('div');
+        pauseMask.className = 'pause-mask';
+        pauseMask.innerHTML = '<span>⏸️ 暂停中，点击继续</span>';
+        pauseMask.onclick = () => {
+            if(pauseMask.parentNode) pauseMask.remove();
+            pauseMask = null;
+            paused = false;
+            pauseBtn.innerText = '⏸️ 暂停';
+            switchGame(current);
+        };
+        document.body.appendChild(pauseMask);
+    }
+    pauseBtn.onclick = () => {
+        if(paused){
+            if(pauseMask) pauseMask.click();
+            return;
+        }
+        paused = true;
+        pauseBtn.innerText = '▶️ 继续';
+        stopAllTask();
+        showPauseLayer();
+    };
+
+    resetScoreBtn.onclick = resetAll;
+    callBtn.onclick = () => window.open('https://c6.y.qq.com/base/fcgi-bin/u?__=azQcv6IG7qGQ', '_blank');
+
+    // 切换按钮激活样式
+    function setActiveBtn(btn) {
+        [btnFruit,btnWord,btnPop,btnBanana].forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    btnFruit.onclick = () => { setActiveBtn(btnFruit); switchGame('fruit'); };
+    btnWord.onclick = () => { setActiveBtn(btnWord); switchGame('word'); };
+    btnPop.onclick = () => { setActiveBtn(btnPop); switchGame('pop'); };
+    btnBanana.onclick = () => { setActiveBtn(btnBanana); switchGame('banana'); };
+
+    // 启动游戏
+    switchGame('fruit');
+})();
+</script>
+</body>
+</html>
